@@ -1,5 +1,50 @@
-.preview {
-  width: 300px;
-  height: 300px;
-  object-fit: contain;
+body {
+  background: url(concrete_seamless.png);
+  color: #333;
+  font-family: 'Bitter', 'Times New Roman', serif;
+  overflow: hidden;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.workspace {
+  bottom: 10%;
+  left: 10%;
+  position: absolute;
+  right: 10%;
+  top: 10%;
+}
+
+.polaroid {
+  background-color: #fff;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 10px 10px 80px 10px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 300ms, box-shadow 600ms 400ms, transform 600ms;
+  width: 100%;
+}
+
+.polaroid.before,
+.polaroid.after {
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+
+.polaroid.before {
+  transform: translate(50%, -50%) rotate(5deg) !important;
+}
+
+.polaroid.after {
+  transform: translate(-150%, -50%) rotate(-5deg) !important;
+}
+
+.polaroid img {
+  outline: 1px solid #eee;
+  width: 100%;
 }

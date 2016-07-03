@@ -1,5 +1,5 @@
 $(function() {
-  var $preview = $('.preview');
+  var $workspace = $('.workspace');
   var $nextButton = $('button.next');
 
   var imageUrlsCached = [];
@@ -12,7 +12,7 @@ $(function() {
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
-  $nextButton.click(handleNextButtonClick);
+  $nextButton.click(showNextImage);
   $nextButton.click();
 
 
@@ -32,8 +32,13 @@ $(function() {
       return;
     }
 
-    $preview.attr('src', imageUrlsCached.pop());
-    $nextButton.prop('disabled', false);
+    var $polaroid = $('<div class="polaroid before"><img></div>');
+    $polaroid.css('transform', 'translate(-50%, -50%) rotate(' + (Math.random() * 10 - 5) + 'deg)');
+
+    var $img = $polaroid.find('img');
+    $img.attr('src', imageUrlsCached.pop());
+    $polaroid.appendTo($workspace);
+    setTimeout(function() { $polaroid.removeClass('before'); }, 50);
   }
 
 
@@ -129,12 +134,6 @@ $(function() {
     printStatus();
 
     cacheImagesIfNeeded();
-  }
-
-
-  function handleNextButtonClick() {
-    $nextButton.prop('disabled', true);
-    showNextImage();
   }
 
 
