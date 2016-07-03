@@ -111,7 +111,7 @@ $(function() {
 
     console.debug('Loading a batch of new image URLs.');
     var batchId = ('00' + Math.floor(Math.random() * 1000)).slice(-3);
-    $.ajax('/imagenet/urls_' + batchId).
+    $.ajax('imagenet/urls_' + batchId).
         done(handleImageUrlsLoad.bind(null, batchId)).
         fail(function() {
           console.error('Failed to load a batch of new image URLs. Retrying after 1s...');
