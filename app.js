@@ -136,7 +136,7 @@ $(function() {
     }
 
     console.debug('Loading a batch of new image URLs.');
-    var batchId = ('00' + Math.floor(Math.random() * 1000)).slice(-3);
+    var batchId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
     $.ajax('imagenet/urls_' + batchId).
         done(handleImageUrlsLoad.bind(null, batchId)).
         fail(function() {
@@ -182,7 +182,7 @@ $(function() {
     if (!isTouching) {
       return;
     }
-    
+
     var coordinates = e.changedTouches != null ? e.changedTouches[0] : e;
     lastTouchX = touchX;
     lastTouchY = touchY;
