@@ -168,7 +168,10 @@ $(function() {
     touchX = 0;
     touchY = 0;
     touchT = new Date().valueOf();
+    
     $polaroid.addClass('touching');
+    
+    e.preventDefault();
   }
 
 
@@ -179,7 +182,10 @@ $(function() {
     touchX = e.changedTouches[0].clientX - touchStartX;
     touchY = e.changedTouches[0].clientY - touchStartY;
     touchT = new Date().valueOf();
+    
     $polaroid.css('transform', 'translate(' + touchX + 'px, ' + touchY + 'px) translate(-50%, -50%)');
+    
+    e.preventDefault();
   }
 
 
@@ -203,6 +209,8 @@ $(function() {
       // Snap the image back to the center.
       $polaroid.css('transform', 'translate(-50%, -50%)');  
     }
+
+    e.preventDefault();
   }
 
 
