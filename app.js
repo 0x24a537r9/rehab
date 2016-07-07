@@ -8,6 +8,7 @@ $(function() {
   var isWaitingForImage = false;
   var isWaitingForImageUrls = false;
 
+  var isTouching = false;
   var touchStartX = 0;
   var touchStartY = 0;
   var lastTouchX = 0;
@@ -21,9 +22,9 @@ $(function() {
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
-  $workspace.on('touchstart', '.polaroid', handleTouchStart);
-  $workspace.on('touchmove', '.polaroid', handleTouchMove);
-  $workspace.on('touchend', '.polaroid', handleTouchEnd);
+  $workspace.on('touchstart mousedown', '.polaroid', handleTouchStart);
+  $workspace.on('touchmove mousemove', '.polaroid', handleTouchMove);
+  $workspace.on('touchend mouseup', '.polaroid', handleTouchEnd);
   $(window).resize(resizePolaroid);
 
   showNextImage();
@@ -163,11 +164,13 @@ $(function() {
 
 
   function handleTouchStart(e) {
-    touchStartX = e.changedTouches[0].clientX;
-    touchStartY = e.changedTouches[0].clientY;
+    var coordinates = e.changedTouches != null ? e.changedTouches[0] : e;
+    touchStartX = coordinates.clientX;
+    touchStartY = coordinates.clientY;
     touchX = 0;
     touchY = 0;
     touchT = new Date().valueOf();
+    isTouching = true;
     
     $polaroid.addClass('touching');
     
@@ -176,11 +179,16 @@ $(function() {
 
 
   function handleTouchMove(e) {
+    if (!isTouching) {
+      return;
+    }
+    
+    var coordinates = e.changedTouches != null ? e.changedTouches[0] : e;
     lastTouchX = touchX;
     lastTouchY = touchY;
     lastTouchT = touchT;
-    touchX = e.changedTouches[0].clientX - touchStartX;
-    touchY = e.changedTouches[0].clientY - touchStartY;
+    touchX = coordinates.clientX - touchStartX;
+    touchY = coordinates.clientY - touchStartY;
     touchT = new Date().valueOf();
     
     $polaroid.css('transform', 'translate(' + touchX + 'px, ' + touchY + 'px) translate(-50%, -50%)');
@@ -193,6 +201,7 @@ $(function() {
     var deltaX = touchX - lastTouchX;
     var deltaY = touchY - lastTouchY;
     var deltaT = touchT - lastTouchT;
+    isTouching = false;
     
     $polaroid.removeClass('touching');
     if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) / deltaT > 0.25) {
