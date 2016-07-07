@@ -27,7 +27,14 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
   transition: opacity 300ms, box-shadow 600ms 400ms, transform 600ms;
+}
+
+.polaroid.width-bound {
   width: 100%;
+}
+
+.polaroid.height-bound {
+  height: 100%;
 }
 
 .polaroid.before,
@@ -46,5 +53,12 @@ body {
 
 .polaroid img {
   outline: 1px solid #eee;
+}
+
+.polaroid.width-bound img {
   width: 100%;
+}
+
+.polaroid.height-bound img {
+  height: 100%;
 }

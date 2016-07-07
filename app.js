@@ -1,9 +1,10 @@
 $(function() {
+  var $window = $(window);
   var $workspace = $('.workspace');
   var $nextButton = $('button.next');
 
-  var imageUrlsCached = [];
-  var imageUrlsLoading = [];
+  var imagesCached = [];
+  var imagesLoading = [];
   var imageUrlsQueued = [];
   var isWaitingForImage = false;
   var isWaitingForImageUrls = false;
@@ -12,43 +13,58 @@ $(function() {
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
+  $window.resize(handleViewportResize);
+
   $nextButton.click(showNextImage);
   $nextButton.click();
 
 
   function printStatus() {
-    console.debug('Cached: ' + imageUrlsCached.length + ', ' +
-                  'Loading: ' + imageUrlsLoading.length + ', ' +
+    console.debug('Cached: ' + imagesCached.length + ', ' +
+                  'Loading: ' + imagesLoading.length + ', ' +
                   'Queued: ' + imageUrlsQueued.length);
+  }
+
+
+  function handleViewportResize() {
+    resizePolaroid($('.polaroid:last'));
+  }
+
+
+  function resizePolaroid($polaroid) {
+    $polaroid.removeClass("width-bound height-bound");
+    var $img = $polaroid.find('img');
+    var isWidthBound = $img.width() / $img.height() >= $window.width() / $window.height();
+    $polaroid.addClass(isWidthBound ? 'width-bound' : 'height-bound');
   }
 
 
   function showNextImage() {
     printStatus();
     cacheImagesIfNeeded();
-    if (imageUrlsCached.length <= 0) {
+    if (imagesCached.length <= 0) {
       isWaitingForImage = true;
       console.warn('Ran out of cached images. Waiting for images to load...');
       return;
     }
 
-    var $polaroid = $('<div class="polaroid before"><img></div>');
+    var $polaroid = $('<div class="polaroid before"></div>');
     $polaroid.css('transform', 'translate(-50%, -50%) rotate(' + (Math.random() * 10 - 5) + 'deg)');
-
-    var $img = $polaroid.find('img');
-    $img.attr('src', imageUrlsCached.pop());
+    $polaroid.append(imagesCached.pop());
+    resizePolaroid($polaroid);
     $polaroid.appendTo($workspace);
+
     setTimeout(function() { $polaroid.removeClass('before'); }, 50);
   }
 
 
   function cacheImagesIfNeeded() {
-    if (imageUrlsCached.length + imageUrlsLoading.length >= MIN_IMAGES_CACHED_OR_LOADING) {
+    if (imagesCached.length + imagesLoading.length >= MIN_IMAGES_CACHED_OR_LOADING) {
       return;
     }
 
     console.debug('Loading a batch of new images.');
-    while (imageUrlsLoading.length < MAX_IMAGES_LOADING) {
+    while (imagesLoading.length < MAX_IMAGES_LOADING) {
       queueImagesIfNeeded();
       if (imageUrlsQueued.length <= 0) {
         console.warn('Ran out of queued image URLs. Waiting for image URLs to load...');
@@ -61,7 +77,7 @@ $(function() {
       imgEl.onload = handleImageLoad.bind(null, imgEl, timeout);
       imgEl.onerror = handleImageError.bind(null, imgEl, timeout);
       imgEl.src = imageUrl;
-      imageUrlsLoading.push(imageUrl);
+      imagesLoading.push(imgEl);
       console.debug('Loading image: ' + imageUrl);
     }
   }
@@ -70,18 +86,21 @@ $(function() {
   function handleImageLoad(imgEl, timeout) {
     console.debug('Loaded image: ' + imgEl.src);
 
-    // Add to imageUrlsCached.
+    // Add to imagesCached.
     clearTimeout(timeout);
-    removeItem(imageUrlsLoading, imgEl.src);
+    removeItem(imagesLoading, imgEl);
     if (imgEl.width < 100 || imgEl.height < 100) {
       console.warn('Rejected image for being too small: ' + imgEl.src);
       return;
     } else if (/static.flickr.com/i.test(imgEl.src) && imgEl.width == 500 && imgEl.height == 374) {
-      console.warn('Rejected image for probably being a flickr "no longer available" image: ' + imgEl.src);
+      console.warn('Rejected image for probably being a Flickr "no longer available" imgEl: ' + imgEl.src);
+      return;
+    } else if (/.ggpht.com/i.test(imgEl.src) && imgEl.width == 200 && imgEl.height == 200) {
+      console.warn('Rejected image for probably being a Google "no longer available" imgEl: ' + imgEl.src);
       return;
     }
 
-    imageUrlsCached.push(imgEl.src);
+    imagesCached.push(imgEl);
     printStatus();
 
     // Show the next image if we were waiting on it.
@@ -94,13 +113,15 @@ $(function() {
 
   function handleImageError(imgEl, timeout) {
     console.warn('Image errored out: ' + imgEl.src);
-    removeItem(imageUrlsLoading, imgEl.src);
+    removeItem(imagesLoading, imgEl);
+    printStatus();
   }
 
 
   function handleImageTimeout(imgEl) {
     console.warn('Image timed out: ' + imgEl.src);
-    removeItem(imageUrlsLoading, imgEl.src);
+    removeItem(imagesLoading, imgEl);
+    printStatus();
   }
 
 
