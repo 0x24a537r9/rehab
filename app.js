@@ -1,6 +1,6 @@
 $(function() {
   var $workspace = $('.workspace');
-  var $nextButton = $('button.next');
+  var $polaroid = null;
 
   var imagesCached = [];
   var imagesLoading = [];
@@ -8,14 +8,25 @@ $(function() {
   var isWaitingForImage = false;
   var isWaitingForImageUrls = false;
 
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var lastTouchX = 0;
+  var lastTouchY = 0;
+  var lastTouchT = 0;
+  var touchX = 0;
+  var touchY = 0;
+  var touchT = 0;
+
   var MIN_IMAGES_CACHED_OR_LOADING = 10;
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
-  $(window).resize(handleViewportResize);
+  $workspace.on('touchstart', '.polaroid', handleTouchStart);
+  $workspace.on('touchmove', '.polaroid', handleTouchMove);
+  $workspace.on('touchend', '.polaroid', handleTouchEnd);
+  $(window).resize(resizePolaroid);
 
-  $nextButton.click(showNextImage);
-  $nextButton.click();
+  showNextImage();
 
 
   function printStatus() {
@@ -25,16 +36,11 @@ $(function() {
   }
 
 
-  function handleViewportResize() {
-    resizePolaroid($('.polaroid:last'));
-  }
-
-
-  function resizePolaroid($polaroid) {
-    $polaroid.removeClass("width-bound height-bound");
-    var imgEl = $polaroid.find('img')[0];
-    var isWidthBound = imgEl.width / imgEl.height >= window.innerWidth / window.innerHeight;
-    $polaroid.addClass(isWidthBound ? 'width-bound' : 'height-bound');
+  function removeItem(a, item) {
+    var i = a.indexOf(item);
+    if (i >= 0) {
+      a.splice(i, 1);  
+    }
   }
 
 
@@ -47,13 +53,12 @@ $(function() {
       return;
     }
 
-    var $polaroid = $('<div class="polaroid before"></div>');
-    $polaroid.css('transform', 'translate(-50%, -50%) rotate(' + (Math.random() * 10 - 5) + 'deg)');
+    $polaroid = $('<div class="polaroid entering"></div>');
     $polaroid.append(imagesCached.pop());
     resizePolaroid($polaroid);
     $polaroid.appendTo($workspace);
 
-    setTimeout(function() { $polaroid.removeClass('before'); }, 50);
+    setTimeout(function() { $polaroid.removeClass('entering'); }, 50);
   }
 
 
@@ -157,10 +162,54 @@ $(function() {
   }
 
 
-  function removeItem(a, item) {
-    var i = a.indexOf(item);
-    if (i >= 0) {
-      a.splice(i, 1);  
+  function handleTouchStart(e) {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+    touchX = 0;
+    touchY = 0;
+    touchT = new Date().valueOf();
+    $polaroid.addClass('touching');
+  }
+
+
+  function handleTouchMove(e) {
+    lastTouchX = touchX;
+    lastTouchY = touchY;
+    lastTouchT = touchT;
+    touchX = e.changedTouches[0].clientX - touchStartX;
+    touchY = e.changedTouches[0].clientY - touchStartY;
+    touchT = new Date().valueOf();
+    $polaroid.css('transform', 'translate(' + touchX + 'px, ' + touchY + 'px) translate(-50%, -50%)');
+  }
+
+
+  function handleTouchEnd(e) {
+    var deltaX = touchX - lastTouchX;
+    var deltaY = touchY - lastTouchY;
+    var deltaT = touchT - lastTouchT;
+    
+    $polaroid.removeClass('touching');
+    if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) / deltaT > 0.25) {
+      // Dismiss the image.
+      var $oldPolaroid = $polaroid;
+      $oldPolaroid.addClass('dismissing');
+      touchX += deltaX * 600 / deltaT;
+      touchY += deltaY * 600 / deltaT;
+      $oldPolaroid.css('transform', 'translate(' + touchX + 'px, ' + touchY + 'px) translate(-50%, -50%)');
+      setTimeout(function() { $oldPolaroid.remove(); }, 600);
+
+      showNextImage();
+    } else {
+      // Snap the image back to the center.
+      $polaroid.css('transform', 'translate(-50%, -50%)');  
     }
+  }
+
+
+  function resizePolaroid() {
+    $polaroid.removeClass('width-bound height-bound');
+    var imgEl = $polaroid.find('img')[0];
+    var isWidthBound = imgEl.width / imgEl.height >= window.innerWidth / window.innerHeight;
+    $polaroid.addClass(isWidthBound ? 'width-bound' : 'height-bound');
   }
 });
