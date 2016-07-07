@@ -1,5 +1,4 @@
 $(function() {
-  var $window = $(window);
   var $workspace = $('.workspace');
   var $nextButton = $('button.next');
 
@@ -13,7 +12,7 @@ $(function() {
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
-  $window.resize(handleViewportResize);
+  $(window).resize(handleViewportResize);
 
   $nextButton.click(showNextImage);
   $nextButton.click();
@@ -33,8 +32,8 @@ $(function() {
 
   function resizePolaroid($polaroid) {
     $polaroid.removeClass("width-bound height-bound");
-    var $img = $polaroid.find('img');
-    var isWidthBound = $img.width() / $img.height() >= $window.width() / $window.height();
+    var imgEl = $polaroid.find('img')[0];
+    var isWidthBound = imgEl.width / imgEl.height >= window.innerWidth / window.innerHeight;
     $polaroid.addClass(isWidthBound ? 'width-bound' : 'height-bound');
   }
 
