@@ -7,6 +7,7 @@ $(function() {
   var imageUrlsQueued = [];
   var isWaitingForImage = false;
   var isWaitingForImageUrls = false;
+  var imagesShown = 0;
 
   var isTouching = false;
   var touchStartX = 0;
@@ -65,6 +66,11 @@ $(function() {
     resizePolaroid($polaroid);
 
     setTimeout(function() { $polaroid.removeClass('entering'); }, 50);
+
+    ++imagesShown;
+    if (ga != null && (imagesShown < 5 || imagesShown % 5 == 0)) {
+      ga('send', 'event', 'image', 'show', ('000' + imagesShown).slice(-4));
+    }
   }
 
 
