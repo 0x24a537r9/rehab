@@ -34,13 +34,6 @@ $(function() {
   textFit($('.instructions')[0]);
 
 
-  function printStatus() {
-    console.debug('Cached: ' + imagesCached.length + ', ' +
-                  'Loading: ' + imagesLoading.length + ', ' +
-                  'Queued: ' + imageUrlsQueued.length);
-  }
-
-
   function removeItem(a, item) {
     var i = a.indexOf(item);
     if (i >= 0) {
@@ -50,7 +43,6 @@ $(function() {
 
 
   function showNextImage() {
-    printStatus();
     cacheImagesIfNeeded();
     if (imagesCached.length <= 0) {
       isWaitingForImage = true;
@@ -123,7 +115,6 @@ $(function() {
     }
 
     imagesCached.push(imgEl);
-    printStatus();
 
     // Show the next image if we were waiting on it.
     if (isWaitingForImage) {
@@ -136,14 +127,12 @@ $(function() {
   function handleImageError(imgEl, timeout) {
     console.warn('Image errored out: ' + imgEl.src);
     removeItem(imagesLoading, imgEl);
-    printStatus();
   }
 
 
   function handleImageTimeout(imgEl) {
     console.warn('Image timed out: ' + imgEl.src);
     removeItem(imagesLoading, imgEl);
-    printStatus();
   }
 
 
@@ -174,7 +163,6 @@ $(function() {
     for (var i = 0; i < lines.length; ++i) {
       imageUrlsQueued.push(lines[i].split(/\s+/).slice(1, 3));
     }
-    printStatus();
 
     cacheImagesIfNeeded();
   }
