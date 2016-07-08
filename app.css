@@ -1,9 +1,8 @@
 body {
   background: url(concrete_seamless.png);
-  color: #333;
+  font-family: 'Bitter', 'Times New Roman', serif;
   overflow: hidden;
   text-align: center;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .workspace {
@@ -21,11 +20,17 @@ body {
   border-width: 10px 10px 80px 10px;
   box-shadow: 0 2px 2px 0px rgba(0,0,0,0.3);
   box-sizing: border-box;
+  cursor: default;
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   transition: opacity 300ms, transform 600ms;
+  will-change: transform;
+}
+
+.polaroid.hidden {
+  opacity: 0;
 }
 
 .polaroid.width-bound {
@@ -61,4 +66,31 @@ body {
 
 .polaroid.height-bound img {
   height: 100%;
+}
+
+.label {
+  bottom: -60px;
+  height: 40px;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 300ms;
+  white-space: nowrap;
+  width: 100%;
+  will-change: opacity;
+}
+
+.label:hover,
+.label.shown {
+  opacity: 1;
+}
+
+.instructions {
+  bottom: 5%;
+  color: #fff;
+  font-size: 18px;
+  left: 5%;
+  position: absolute;
+  right: 5%;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
+  top: 5%;
 }

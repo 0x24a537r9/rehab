@@ -1,12 +1,60 @@
 <html>
   <head>
-    <title>Aphasia Rehab</title>
+    <title>Aphasia Cards</title>
+    <!-- Metadata -->
+    <meta name="title" content="Aphasia Cards" />
+    <meta name="description" content="Practice aphasic word-finding with nearly a million different flashcards. Train your brain to remember. Don't live stuck on the tip of your tongue!" />
+    <meta name="keywords" content="aphasia, anomia, word finding, game, rehab, practice, puzzle, flashcards, cards, recovery, online, therapy" />
+    <meta name="theme-color" content="#7d9f40" />
+    <meta property="og:site_name" content="Aphasia Cards" />
+    <meta property="og:url" content="http://aphasiacards.com/" />
+    <meta property="og:title" content="Aphasia Cards" />
+    <meta property="og:image" content="http://aphasiacards.com/favicons/favicon-1024x1024.png" />
+    <meta property="og:description" content="Practice aphasic word-finding with nearly a million different flashcards. Train your brain to remember. Don't live stuck on the tip of your tongue!" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Aphasia Cards" />
+    <meta name="twitter:description" content="Practice aphasic word-finding with nearly a million different flashcards. Train your brain to remember. Don't live stuck on the tip of your tongue!" />
+    <meta name="twitter:image" content="http://aphasiacards.com/favicons/favicon-1024x1024.png" />
+    <!-- Favicons -->
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://aphasiacards.com/favicons/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://aphasiacards.com/favicons/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://aphasiacards.com/favicons/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://aphasiacards.com/favicons/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="http://aphasiacards.com/favicons/apple-touch-icon-60x60.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="http://aphasiacards.com/favicons/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="http://aphasiacards.com/favicons/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="http://aphasiacards.com/favicons/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="http://aphasiacards.com/favicons/favicon-196x196.png" sizes="196x196" />
+    <link rel="icon" type="image/png" href="http://aphasiacards.com/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="http://aphasiacards.com/favicons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="http://aphasiacards.com/favicons/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="http://aphasiacards.com/favicons/favicon-128x128.png" sizes="128x128" />
+    <meta name="application-name" content="Aphasia Cards"/>
+    <meta name="msapplication-TileColor" content="#2A70B6" />
+    <meta name="msapplication-TileImage" content="http://aphasiacards.com/favicons/mstile-144x144.png" />
+    <meta name="msapplication-square70x70logo" content="http://aphasiacards.com/favicons/mstile-70x70.png" />
+    <meta name="msapplication-square150x150logo" content="http://aphasiacards.com/favicons/mstile-150x150.png" />
+    <meta name="msapplication-wide310x150logo" content="http://aphasiacards.com/favicons/mstile-310x150.png" />
+    <meta name="msapplication-square310x310logo" content="http://aphasiacards.com/favicons/mstile-310x310.png" />
+    <!-- Code -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <link href='//fonts.googleapis.com/css?family=Bitter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="app.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/textfit/textFit.min.js"></script>
     <script src="app.js"></script>
   </head>
   <body>
-    <div class="workspace"></div>
+    <div class="workspace">
+      <div class="polaroid hidden">
+        <img src="ferns.jpg">
+        <div class="instructions">
+          <h1>Aphasia Cards</h1>
+          <p><b>Instructions:</b> &nbsp;Swipe left to see pictures of objects. Try to name each object out loud. If you need help, just tap the white area below to see the word.
+        </div>
+        <div class="label">&lt;&lt; Swipe left to continue</div>
+      </div>
+    </div>
   </body>
 </html>

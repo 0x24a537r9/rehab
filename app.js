@@ -1,6 +1,6 @@
 $(function() {
   var $workspace = $('.workspace');
-  var $polaroid = null;
+  var $polaroid = $('.polaroid');
 
   var imagesCached = [];
   var imagesLoading = [];
@@ -22,12 +22,15 @@ $(function() {
   var MAX_IMAGES_LOADING = 10;
   var MIN_IMAGES_QUEUED = 10;
 
+  $workspace.on('touchstart mousedown', '.label', handleLabelTouchStart);
   $workspace.on('touchstart mousedown', '.polaroid', handleTouchStart);
   $workspace.on('touchmove mousemove', '.polaroid', handleTouchMove);
   $workspace.on('touchend mouseup', '.polaroid', handleTouchEnd);
   $(window).resize(resizePolaroid);
 
-  showNextImage();
+  resizePolaroid();
+  setTimeout(function() { $polaroid.removeClass('hidden'); }, 300);
+  textFit($('.instructions')[0]);
 
 
   function printStatus() {
@@ -55,9 +58,11 @@ $(function() {
     }
 
     $polaroid = $('<div class="polaroid entering"></div>');
-    $polaroid.append(imagesCached.pop());
-    resizePolaroid($polaroid);
+    var imgEl = imagesCached.pop();
+    $polaroid.append(imgEl);
+    $polaroid.append($('<div class="label">').text(imgEl.alt));
     $polaroid.appendTo($workspace);
+    resizePolaroid($polaroid);
 
     setTimeout(function() { $polaroid.removeClass('entering'); }, 50);
   }
@@ -76,11 +81,14 @@ $(function() {
         return;
       }
 
-      var imageUrl = imageUrlsQueued.pop();
+      var imageData = imageUrlsQueued.pop();
+      var imageName = imageData[0].replace(/_/g, ' ');
+      var imageUrl = imageData[1];
       var imgEl = new Image();
       var timeout = setTimeout(handleImageTimeout.bind(null, imgEl), 5000);
       imgEl.onload = handleImageLoad.bind(null, imgEl, timeout);
       imgEl.onerror = handleImageError.bind(null, imgEl, timeout);
+      imgEl.alt = imageName;
       imgEl.src = imageUrl;
       imagesLoading.push(imgEl);
       console.debug('Loading image: ' + imageUrl);
@@ -97,10 +105,13 @@ $(function() {
     if (imgEl.width < 100 || imgEl.height < 100) {
       console.warn('Rejected image for being too small: ' + imgEl.src);
       return;
-    } else if (/static.flickr.com/i.test(imgEl.src) && imgEl.width == 500 && imgEl.height == 374) {
+    } else if (/static.flickr.com/i.test(imgEl.src) &&
+               imgEl.width == 500 && imgEl.height == 374) {
       console.warn('Rejected image for probably being a Flickr "no longer available" imgEl: ' + imgEl.src);
       return;
-    } else if (/.ggpht.com/i.test(imgEl.src) && imgEl.width == 200 && imgEl.height == 200) {
+    } else if ((/.ggpht.com/i.test(imgEl.src) || /.blogspot.com/i.test(imgEl.src) ||
+                /.google.com/i.test(imgEl.src)) &&
+               imgEl.width == 200 && imgEl.height == 200) {
       console.warn('Rejected image for probably being a Google "no longer available" imgEl: ' + imgEl.src);
       return;
     }
@@ -136,7 +147,7 @@ $(function() {
     }
 
     console.debug('Loading a batch of new image URLs.');
-    var batchId = ('000' + Math.floor(Math.random() * 10000)).slice(-4);
+    var batchId = Math.floor(Math.random() * 10000);
     $.ajax('imagenet/urls_' + batchId).
         done(handleImageUrlsLoad.bind(null, batchId)).
         fail(function() {
@@ -155,7 +166,7 @@ $(function() {
 
     var lines = $.trim(data).split('\n');
     for (var i = 0; i < lines.length; ++i) {
-      imageUrlsQueued.push(lines[i].split(/\s+/)[1]);
+      imageUrlsQueued.push(lines[i].split(/\s+/).slice(1, 3));
     }
     printStatus();
 
@@ -223,10 +234,16 @@ $(function() {
   }
 
 
+  function handleLabelTouchStart(e) {
+    $(e.currentTarget).addClass('shown');
+  }
+
+
   function resizePolaroid() {
     $polaroid.removeClass('width-bound height-bound');
     var imgEl = $polaroid.find('img')[0];
     var isWidthBound = imgEl.width / imgEl.height >= window.innerWidth / window.innerHeight;
     $polaroid.addClass(isWidthBound ? 'width-bound' : 'height-bound');
+    textFit($polaroid.find('.label')[0]);
   }
 });
